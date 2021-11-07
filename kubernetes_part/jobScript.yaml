@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: script-pod
+spec:
+  ttlSecondsAfterFinished: 20
+  template:
+    spec:
+      containers:
+      - name: script-boto3
+        image: boto3test:v1 #image built from the dockerfile
+        command : ["python3","createFile_s3"]
+        env:
+          - name: ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                 name: aws-credential
+                 key: access-key
+          - name: ACCESS_SECRET
+            valueFrom:
+              secretKeyRef:
+                 name: aws-credential
+                 key: access-secret
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                 fieldPath: metadata.namespace
+          - name: FIRSTNAME
+            value: "Osama"
+          - name: LASTNAME
+            value: "Mustafa"
+      restartPolicy: Never

@@ -1,0 +1,4 @@
+region="eu-west-3"
+namespaces=["qa","staging"]
+firstName="Osama"
+lastName="Mustafa"

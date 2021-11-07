@@ -1,0 +1,73 @@
+#! /usr/bin/python3
+
+import os
+import boto3
+from datetime import datetime
+
+#Credential
+access_key = os.environ['ACCESS_KEY']
+access_secret = os.environ['ACCESS_SECRET']
+bucket_name = os.environ['NAMESPACE']+"-"+os.environ['FIRSTNAME']+"-"+os.environ['LASTNAME']+"-platform-challenge"
+
+#Creating Session With Boto3.
+session = boto3.Session(
+aws_access_key_id=access_key,
+aws_secret_access_key=access_secret
+)
+
+#Creating S3 Resource & Client From the Session.
+s3 = session.resource('s3')
+client = session.client('s3')
+
+#Text content of the file
+txt_data = b'This is the content of the file uploaded from python boto3'
+
+#Creat file name
+now = datetime.now()
+current_time = now.strftime('%Y-%m-%d_%H:%M:%S')
+file_name = current_time+"_file.txt"
+
+try:
+    #add file to bucket
+    object = s3.Object(bucket_name, file_name)
+    result = object.put(Body=txt_data)
+    
+    #tag file
+    response = client.put_object_tagging(
+        Bucket=bucket_name,
+        Key=file_name,
+        Tagging={
+            'TagSet': [
+                {
+                    'Key': 'source',
+                    'Value': 'script'
+                    },
+                    ]
+                    }
+        )
+
+except ClientError as e:
+    print(e)
+except Exception as e:
+    print(e)
+"""
+#create lifecycle based on tag
+
+#lifecycle rule
+lifecycle_config_settings = {
+    'Rules': [
+        {'ID': 'Delete Rule',
+            'Filter': {'Tag':
+            {
+                'Key': 'source',
+                'Value': 'script'
+            }
+         },
+         'Status': 'Enabled',
+         'Expiration': { 'Days': 1 }}
+    ]}
+
+#apply the lifecyle
+response_lifecycle = client.put_bucket_lifecycle_configuration(Bucket=bucket_name , LifecycleConfiguration=lifecycle_config_settings)
+"""
+
