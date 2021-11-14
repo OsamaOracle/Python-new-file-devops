@@ -14,7 +14,7 @@ staging-FIRSTNAME-LASTNAME-platform-challenge
 
 The app will  be running as a docker container in a Kubernetes cluster every 5 minutes. There is a Namespace for QA and a different Namespace for Staging in the cluster. You don't need to provide tests but you need to be sure the app will work. 
 
-# Deployment--
+# Deployment
 
 If you need, you can use localstack ( https://github.com/localstack/localstack ( https://github.com/localstack/localstack ) as mock for having a S3 bucket locally and running your app.
 
